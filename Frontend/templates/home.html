@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+
+    <title></title>
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <link rel="stylesheet" href="/resources/demos/style.css">
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<body>
+
+<div style="height: 55vh;" class="jumbotron ui-widget">
+    <h4 style="text-align: center;padding: 20px;">Search as you Type with Elastic Search</h4>
+    <div style="position:absolute; left: 40%;top: 30%">
+        <input id="source" />
+        <div id="result"></div>
+        <a onclick="btn_submit()" style="position: absolute; top: 0%;left: 120%" class="btn btn-primary">Submit</a>
+    </div>
+</div>s
+
+
+<script>
+    const $source = document.querySelector('#source');
+    const $result = document.querySelector('#result');
+
+    const typeHandler = function(e) {
+        $result.innerHTML = e.target.value;
+        console.log(e.target.value);
+
+        $.ajax({
+            url: "/pipe",
+            type : 'POST',
+            cache: false,
+            data:{'data': e.target.value},
+            success: function(html)
+            {
+                console.log(html)
+                var data = html.aggregations.auto_complete.buckets
+                var _ = []
+
+                $.each(data, (index, value)=>{
+                    _.push(value.key)
+                });
+                console.log(_)
+                $( "#source" ).autocomplete({
+                    source: _
+                });
+            }
+        });
+    }
+
+    $source.addEventListener('input', typeHandler) // register for oninput
+    $source.addEventListener('propertychange', typeHandler) // for IE8
+
+    function btn_submit()
+    {
+        sessionStorage.setItem('title', $("#source").val() )
+    }
+
+
+    $( document ).ready(function() {
+
+        var data = sessionStorage.getItem('title')
+        $("#source").val(data);
+    });
+
+
+
+</script>
+</body>
+</html>
