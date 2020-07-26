@@ -3,6 +3,7 @@
 * remember you can use regular expression query or match phrase prefix please see youtube video for demo
 
 
-
+#### Tutorial 
+* https://www.youtube.com/watch?v=pA23QJAP-mI
 
 Creating  Auto Complete System Frontend Flask + Backend (Elastic Search)
